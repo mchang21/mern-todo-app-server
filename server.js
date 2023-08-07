@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const todoRoutes = express.Router();
+const router = express.Router();
 const PORT = 4000;
 
 let Todo = require('./todo.model');
@@ -22,7 +22,7 @@ app.use(bodyParser.json()); // Use express.json() middleware for parsing JSON da
     }
 })();
 
-todoRoutes.route('/').get(async (req, res) => {
+router.route('/').get(async (req, res) => {
     try {
         const todos = await Todo.find(); // Use await to wait for the Promise to resolve
         res.json(todos);
@@ -32,7 +32,7 @@ todoRoutes.route('/').get(async (req, res) => {
     }
 });
 
-todoRoutes.route('/:id').get(async (req, res) => {
+router.route('/:id').get(async (req, res) => {
     try {
         let id = req.params.id;
         const todo = await Todo.findById(id);
@@ -43,7 +43,7 @@ todoRoutes.route('/:id').get(async (req, res) => {
     }
 });
 
-todoRoutes.route('/add').post(async (req, res) => {
+router.route('/add').post(async (req, res) => {
     try {
         let todo = new Todo(req.body);
         await todo.save();
@@ -54,7 +54,7 @@ todoRoutes.route('/add').post(async (req, res) => {
     }
 });
 
-todoRoutes.route('/update/:id').post(async (req, res) => {
+router.route('/update/:id').post(async (req, res) => {
     try {
         const todo = await Todo.findById(req.params.id);
         if (!todo) {
@@ -74,7 +74,7 @@ todoRoutes.route('/update/:id').post(async (req, res) => {
     }
 })
 
-todoRoutes.route('/:id').delete(async (req, res) => {
+router.route('/:id').delete(async (req, res) => {
     try {
         const todoID = req.params.id;
         const todo = await Todo.findByIdAndDelete(todoID);
@@ -90,7 +90,7 @@ todoRoutes.route('/:id').delete(async (req, res) => {
     }
 });
 
-app.use('/todos', todoRoutes);
+app.use('/todos', router);
 
 app.listen(PORT, function () {
     console.log("Server is running on Port: " + PORT);
